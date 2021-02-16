@@ -1,6 +1,7 @@
 #include <iostream>
 #include <vector>
 #include <fstream>
+#include <cmath>
 #include "../../../headers/matrix.h"
 
 //equation used is of the form y=a+bx
@@ -15,10 +16,10 @@ void printData(std::string filename)
         std::cout << input << std::endl;
     }
 }
-int sum_product(const std::vector<int> &x, const std::vector<int> &y)
+double sum_product(const std::vector<double> &x, const std::vector<double> &y)
 {
     //we assume that vector x and y are of equal size
-    int sum = 0;
+    double sum = 0;
     for (int i = 0; i < x.size(); i++)
     {
         sum += x[i] * y[i];
@@ -60,27 +61,29 @@ int main()
     std::string filename = "./input.txt";
     printData(filename);
     std::ifstream fin(filename);
-    std::vector<int> x_values;
-    std::vector<int> y_values;
-    int sum_x = 0;
-    int sum_y = 0;
+    std::vector<double> x_values;
+    std::vector<double> y_values;
+    double sum_x = 0;
+    double sum_y = 0;
     unsigned int data_size = 0;
-    int a, b;
+    double a, b;
     while (fin >> a >> b)
     {
         x_values.push_back(a);
-        y_values.push_back(b);
+        //all calculation related to the y should be done with natural log of y
+        //this result came by modifing the equation y=ae^bx==>log(y)=log(a)+bx;
+        y_values.push_back(log(b));
         sum_x += a;
-        sum_y += b;
+        sum_y += log(b);
         data_size++;
     }
     //now i have the create the matrirx and solve the equation using gauss elimination
     //we need to solve this augmented matrix to get the value of a and b
     //where
-    //y=a+bx is the desired linear curve
+    //Y=A+bx is the desired linear curve where Y=log(y) and A=log(a)
     /*
-    ** n        sum(x)    :sum(y)
-    ** sum(x)   sum(x^2)  :sum(xy)
+    ** n        sum(x)    :sum(Y)
+    ** sum(x)   sum(x^2)  :sum(xY)
     */
     auto matrix = matrix::generateMatrix<double>(2, 3);
     matrix[0][0] = data_size;
@@ -94,9 +97,9 @@ int main()
 
     auto soln = solve_gauss_jordan(matrix);
     std::cout << "solution :" << std::endl;
-    for (int i = 0; i < soln.size(); i++)
-    {
-        std::cout << soln[i] << std::endl;
-    }
+
+    std::cout<<"soln[0]"<<soln[0]<<std::endl;
+    std::cout<<"a="<<exp(soln[0])<<std::endl;
+    std::cout<<"b="<<soln[1]<<std::endl;
     return 0;
 }
