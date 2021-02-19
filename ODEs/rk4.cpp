@@ -4,7 +4,7 @@
 //represents dy/dx=RETURN_VALUE
 //you chan change the function by changing this return value
 double df(double x, double y){
-    return log10(x+y);
+    return (pow(y,2)-pow(x,2))/(pow(y,2)+pow(x,2));
 }
 
 int main(){
@@ -21,20 +21,17 @@ int main(){
     double tolerance=0.001;
     std::cout<<"when x="<<x_init<<" ,y = "<<y_init<<std::endl;
     for(int i=0;i<n;i++){
-        //this is exactly euler's formula
-        double y_new=y+h*df(x_init+i*h,y);
-        double y_old=y;
-        std::cout<<"when x="<<x_init+(i+1)*h<<"y = "<<y_new<<std::endl;
-        //modify the obtained value of y untill we get required accuracy
-        while(y_new-y_old>tolerance ){
-            double mean_slope=(df(x_init+i*h,y)+df(x_init+(i+1)*h,y_new))/2;
-            y_old=y_new;
-            y_new=y+h*mean_slope;
-            std::cout<<"when x="<<x_init+(i+1)*h<<"y = "<<y_new<<std::endl;
-        }
-        y=y_new;
-        std::cout<<"--------------------"<<std::endl;
+        //now we determine k1,k2,k3 and k4
+        double k1=h*df(x,y);
+        double k2=h*df(x+h/2,y+k1/2);
+        double k3=h*df(x+h/2,y+k2/2);
+        double k4=h*df(x+h,y+k3);
 
+        //now calculate the value of from these values
+        double k=(k1+2*k2+2*k3+k4)/6;
+        y=y+k;
+        x=x+h;
+        std::cout<<"when x="<<x<<"y= "<<y<<std::endl;
     }
     
 }
