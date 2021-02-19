@@ -20,21 +20,15 @@ int main(){
     std::cout<<"when x="<<x_init<<" ,y = "<<y_init<<std::endl;
     for(int i=0;i<n;i++){
         double yn=y+h*df(x_init+i*h,y);
-        std::cout<<"when x="<<x_init+(i+1)*h<<" ,y = "<<yn<<std::endl;
-        double mean_slope=(df(x_init+i*h,y)+df(x_init+(i+1)*h,yn))/2;
-        std::cout<<"mean slope ="<<mean_slope<<std::endl;
         
-        double y_new=y+h*mean_slope;
-        double y_old=yn;
-        std::cout<<"when x="<<x_init+(i+1)*h<<"y = "<<y_new<<std::endl;
-        std::cout<<"y_old="<<y_old<<"y _new= "<<y_new<<std::endl;
-        int count =0;
-        while(y_new-y_old>tolerance and count<10){
+        double y_new=yn;
+        double y_old=y;
+        while(y_new-y_old>tolerance ){
             double mean_slope=(df(x_init+i*h,y)+df(x_init+(i+1)*h,y_new))/2;
             y_old=y_new;
             y_new=y+h*mean_slope;
             std::cout<<"when x="<<x_init+(i+1)*h<<"y = "<<y_new<<std::endl;
-            count++;
+            // count++;
         }
         y=y_new;
         std::cout<<"--------------------"<<std::endl;
